@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.GsonBuilder
+import dagger.hilt.android.AndroidEntryPoint
 import es.jasalvador.recipeapp.network.RecipeService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -11,8 +12,13 @@ import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    @Inject
+    lateinit var app: BaseApp
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,5 +36,7 @@ class MainActivity : AppCompatActivity() {
             )
             Log.d("MainActivity", "onCreate: ${recipe.title}")
         }
+
+        Log.d("MainActivity", "$app")
     }
 }
