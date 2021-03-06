@@ -6,7 +6,7 @@ import es.jasalvador.recipeapp.network.model.RecipeDtoMapper
 
 class RecipeRepositoryImpl(
     private val recipeService: RecipeService,
-    private val mapper: RecipeDtoMapper
+    private val mapper: RecipeDtoMapper,
 ) : RecipeRepository {
 
     override suspend fun search(token: String, page: Int, query: String): List<Recipe> {
