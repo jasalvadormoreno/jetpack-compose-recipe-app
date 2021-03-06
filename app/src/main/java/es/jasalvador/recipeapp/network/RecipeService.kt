@@ -1,6 +1,6 @@
 package es.jasalvador.recipeapp.network
 
-import es.jasalvador.recipeapp.network.model.RecipeNetworkEntity
+import es.jasalvador.recipeapp.network.model.RecipeDto
 import es.jasalvador.recipeapp.network.responses.RecipeSearchResponse
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -19,5 +19,5 @@ interface RecipeService {
     suspend fun get(
         @Header("Authorization") token: String,
         @Query("id") id: Int,
-    ): RecipeNetworkEntity
+    ): RecipeDto
 }
