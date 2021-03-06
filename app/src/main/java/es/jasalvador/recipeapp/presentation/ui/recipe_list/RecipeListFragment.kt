@@ -1,6 +1,7 @@
 package es.jasalvador.recipeapp.presentation.ui.recipe_list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,11 +26,6 @@ class RecipeListFragment : Fragment() {
 
     val viewModel: RecipeListViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        println("RecipeListFragment: $viewModel")
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,6 +33,12 @@ class RecipeListFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
+                val recipes = viewModel.recipes.value
+
+                recipes.forEach {
+                    Log.d("RecipeListFragment", "${it.title}")
+                }
+
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
                         text = "Recipe List",
