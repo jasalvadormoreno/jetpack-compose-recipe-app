@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import es.jasalvador.recipeapp.presentation.components.CircularIndeterminateProgressBar
 import es.jasalvador.recipeapp.presentation.components.FoodCategoryChip
 import es.jasalvador.recipeapp.presentation.components.RecipeCard
 import es.jasalvador.recipeapp.presentation.components.SearchAppBar
@@ -46,6 +47,7 @@ class RecipeListFragment : Fragment() {
             setContent {
                 val recipes = viewModel.recipes.value
                 val query = viewModel.query.value
+                val loading = viewModel.loading.value
                 val selectedCategory = viewModel.selectedCategory.value
 
                 Column {
@@ -60,11 +62,17 @@ class RecipeListFragment : Fragment() {
                         onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition
                     )
 
-                    LazyColumn(content = {
-                        items(recipes) { recipe ->
-                            RecipeCard(recipe = recipe, onClick = {})
-                        }
-                    })
+                    Box(
+                        modifier = Modifier.fillMaxSize()
+                    ) {
+                        LazyColumn(content = {
+                            items(recipes) { recipe ->
+                                RecipeCard(recipe = recipe, onClick = {})
+                            }
+                        })
+
+                        CircularIndeterminateProgressBar(isDisplayed = loading)
+                    }
                 }
             }
         }
