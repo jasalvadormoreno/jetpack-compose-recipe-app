@@ -4,10 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -18,6 +15,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
@@ -45,6 +43,7 @@ class RecipeListFragment : Fragment() {
             setContent {
                 val recipes = viewModel.recipes.value
                 val query = viewModel.query.value
+                val selectedCategory = viewModel.selectedCategory.value
 
                 Column {
                     Surface(
@@ -72,7 +71,7 @@ class RecipeListFragment : Fragment() {
                                         imeAction = ImeAction.Search,
                                     ),
                                     keyboardActions = KeyboardActions(onSearch = {
-                                        viewModel.newSearch(query)
+                                        viewModel.newSearch()
                                         keyboardController?.hideSoftwareKeyboard()
                                     }),
                                     leadingIcon = { Icon(Icons.Filled.Search, "") },
@@ -83,17 +82,21 @@ class RecipeListFragment : Fragment() {
                                 )
                             }
 
-                            LazyRow(content = {
-                                items(getAllFoodCategories()) { category ->
-                                    FoodCategoryChip(
-                                        category = category.value,
-                                        onExecuteSearch = {
-                                            viewModel.onQueryChanged(it)
-                                            viewModel.newSearch(it)
-                                        }
-                                    )
-                                }
-                            })
+                            LazyRow(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                                content = {
+                                    items(getAllFoodCategories()) { category ->
+                                        FoodCategoryChip(
+                                            category = category.value,
+                                            isSelected = selectedCategory == category,
+                                            onSelectedCategoryChanged = {
+                                                viewModel.onSelectedCategoryChanged(it)
+                                            },
+                                            onExecuteSearch = viewModel::newSearch
+                                        )
+                                    }
+                                })
                         }
                     }
 
