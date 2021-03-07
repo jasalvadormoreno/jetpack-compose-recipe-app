@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import es.jasalvador.recipeapp.R
 import es.jasalvador.recipeapp.domain.model.Recipe
@@ -67,4 +68,13 @@ fun RecipeCard(recipe: Recipe, onClick: () -> Unit) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun RecipeCardPreview() {
+    RecipeCard(recipe = Recipe(
+        title = "Pizza Potato Skins",
+        rating = 16,
+    ), onClick = { /*TODO*/ })
 }

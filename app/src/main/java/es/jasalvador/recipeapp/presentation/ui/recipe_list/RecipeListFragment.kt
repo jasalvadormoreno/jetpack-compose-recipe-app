@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import es.jasalvador.recipeapp.presentation.components.FoodCategoryChip
 import es.jasalvador.recipeapp.presentation.components.RecipeCard
 
 @ExperimentalComposeUiApi
@@ -49,7 +50,7 @@ class RecipeListFragment : Fragment() {
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth(),
-                        color = MaterialTheme.colors.primary,
+                        color = MaterialTheme.colors.surface,
                         elevation = 8.dp,
                     ) {
                         Column {
@@ -84,11 +85,12 @@ class RecipeListFragment : Fragment() {
 
                             LazyRow(content = {
                                 items(getAllFoodCategories()) { category ->
-                                    Text(
-                                        text = category.value,
-                                        style = MaterialTheme.typography.body2,
-                                        color = MaterialTheme.colors.secondary,
-                                        modifier = Modifier.padding(8.dp)
+                                    FoodCategoryChip(
+                                        category = category.value,
+                                        onExecuteSearch = {
+                                            viewModel.onQueryChanged(it)
+                                            viewModel.newSearch(it)
+                                        }
                                     )
                                 }
                             })
