@@ -4,8 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -48,33 +52,49 @@ class RecipeListFragment : Fragment() {
                         color = MaterialTheme.colors.primary,
                         elevation = 8.dp,
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            val keyboardController = LocalSoftwareKeyboardController.current
-                            TextField(
-                                modifier = Modifier
-                                    .fillMaxWidth(0.9f)
-                                    .padding(8.dp),
-                                value = query,
-                                onValueChange = { viewModel.onQueryChanged(it) },
-                                label = {
-                                    Text(text = "Search")
-                                },
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Search,
-                                ),
-                                keyboardActions = KeyboardActions(onSearch = {
-                                    viewModel.newSearch(query)
-                                    keyboardController?.hideSoftwareKeyboard()
-                                }),
-                                leadingIcon = { Icon(Icons.Filled.Search, "") },
-                                textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
-                                colors = TextFieldDefaults.outlinedTextFieldColors(backgroundColor = MaterialTheme.colors.surface),
-                            )
+                        Column {
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                val keyboardController = LocalSoftwareKeyboardController.current
+                                TextField(
+                                    modifier = Modifier
+                                        .fillMaxWidth(0.9f)
+                                        .padding(8.dp),
+                                    value = query,
+                                    onValueChange = { viewModel.onQueryChanged(it) },
+                                    label = {
+                                        Text(text = "Search")
+                                    },
+                                    keyboardOptions = KeyboardOptions(
+                                        keyboardType = KeyboardType.Text,
+                                        imeAction = ImeAction.Search,
+                                    ),
+                                    keyboardActions = KeyboardActions(onSearch = {
+                                        viewModel.newSearch(query)
+                                        keyboardController?.hideSoftwareKeyboard()
+                                    }),
+                                    leadingIcon = { Icon(Icons.Filled.Search, "") },
+                                    textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
+                                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                                        backgroundColor = MaterialTheme.colors.surface
+                                    ),
+                                )
+                            }
+
+                            LazyRow(content = {
+                                items(getAllFoodCategories()) { category ->
+                                    Text(
+                                        text = category.value,
+                                        style = MaterialTheme.typography.body2,
+                                        color = MaterialTheme.colors.secondary,
+                                        modifier = Modifier.padding(8.dp)
+                                    )
+                                }
+                            })
                         }
                     }
+
                     LazyColumn(content = {
                         items(recipes) { recipe ->
                             RecipeCard(recipe = recipe, onClick = {})
