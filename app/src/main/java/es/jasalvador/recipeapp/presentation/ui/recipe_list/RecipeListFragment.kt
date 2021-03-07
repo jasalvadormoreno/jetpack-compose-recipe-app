@@ -26,10 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import es.jasalvador.recipeapp.presentation.components.CircularIndeterminateProgressBar
-import es.jasalvador.recipeapp.presentation.components.FoodCategoryChip
-import es.jasalvador.recipeapp.presentation.components.RecipeCard
-import es.jasalvador.recipeapp.presentation.components.SearchAppBar
+import es.jasalvador.recipeapp.presentation.components.*
 import kotlinx.coroutines.launch
 
 @ExperimentalComposeUiApi
@@ -61,18 +58,18 @@ class RecipeListFragment : Fragment() {
                         onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
                         onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition
                     )
-
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        LazyColumn(content = {
-                            items(recipes) { recipe ->
-                                RecipeCard(recipe = recipe, onClick = {})
-                            }
-                        })
-
-                        CircularIndeterminateProgressBar(isDisplayed = loading, verticalBias = 0.3f)
-                    }
+                    PulsingDemo()
+//                    Box(
+//                        modifier = Modifier.fillMaxSize()
+//                    ) {
+//                        LazyColumn(content = {
+//                            items(recipes) { recipe ->
+//                                RecipeCard(recipe = recipe, onClick = {})
+//                            }
+//                        })
+//
+//                        CircularIndeterminateProgressBar(isDisplayed = loading, verticalBias = 0.3f)
+//                    }
                 }
             }
         }
