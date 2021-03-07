@@ -4,15 +4,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusModifier
@@ -27,6 +28,7 @@ import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import es.jasalvador.recipeapp.presentation.components.FoodCategoryChip
 import es.jasalvador.recipeapp.presentation.components.RecipeCard
+import kotlinx.coroutines.launch
 
 @ExperimentalComposeUiApi
 @AndroidEntryPoint
@@ -82,16 +84,29 @@ class RecipeListFragment : Fragment() {
                                 )
                             }
 
+                            val state = rememberLazyListState()
+                            val scope = rememberCoroutineScope()
                             LazyRow(
                                 modifier = Modifier.fillMaxWidth(),
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
+                                state = state,
                                 content = {
+                                    scope.launch {
+                                        state.scrollToItem(
+                                            viewModel.categoryScrollPositionItem,
+                                            viewModel.categoryScrollPositionOffset
+                                        )
+                                    }
                                     items(getAllFoodCategories()) { category ->
                                         FoodCategoryChip(
                                             category = category.value,
                                             isSelected = selectedCategory == category,
                                             onSelectedCategoryChanged = {
                                                 viewModel.onSelectedCategoryChanged(it)
+                                                viewModel.onChangeCategoryScrollPosition(
+                                                    state.firstVisibleItemIndex,
+                                                    state.firstVisibleItemScrollOffset
+                                                )
                                             },
                                             onExecuteSearch = viewModel::newSearch
                                         )
