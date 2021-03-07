@@ -11,7 +11,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.TextStyle
@@ -37,12 +40,20 @@ class RecipeListFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             setContent {
                 val recipes = viewModel.recipes.value
+                val query = viewModel.query.value
 
-                LazyColumn(content = {
-                    items(recipes) { recipe ->
-                        RecipeCard(recipe = recipe, onClick = { /*TODO*/ })
-                    }
-                })
+                Column {
+                    OutlinedTextField(
+                        value = query,
+                        onValueChange = { viewModel.onQueryChanged(it) }
+                    )
+                    Spacer(modifier = Modifier.padding(16.dp))
+                    LazyColumn(content = {
+                        items(recipes) { recipe ->
+                            RecipeCard(recipe = recipe, onClick = { /*TODO*/ })
+                        }
+                    })
+                }
             }
         }
     }
