@@ -4,30 +4,21 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
-import es.jasalvador.recipeapp.presentation.components.*
-import kotlinx.coroutines.launch
+import es.jasalvador.recipeapp.presentation.components.HeartButton
+import es.jasalvador.recipeapp.presentation.components.HeartButtonState
+import es.jasalvador.recipeapp.presentation.components.PulsingDemo
+import es.jasalvador.recipeapp.presentation.components.SearchAppBar
 
 @ExperimentalComposeUiApi
 @AndroidEntryPoint
@@ -59,6 +50,23 @@ class RecipeListFragment : Fragment() {
                         onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition
                     )
                     PulsingDemo()
+
+                    val currentState = remember { mutableStateOf(HeartButtonState.IDLE) }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(200.dp),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        HeartButton(modifier = Modifier, buttonState = currentState, onToggle = {
+                            currentState.value = if (currentState.value == HeartButtonState.ACTIVE)
+                                HeartButtonState.IDLE
+                            else
+                                HeartButtonState.ACTIVE
+                        })
+                    }
 //                    Box(
 //                        modifier = Modifier.fillMaxSize()
 //                    ) {
