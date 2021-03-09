@@ -8,8 +8,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.BrokenImage
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,45 +54,54 @@ class RecipeListFragment : Fragment() {
                     val loading = viewModel.loading.value
                     val selectedCategory = viewModel.selectedCategory.value
 
-                    Column {
-                        SearchAppBar(
-                            query = query,
-                            onQueryChanged = viewModel::onQueryChanged,
-                            onExecuteSearch = viewModel::newSearch,
-                            categoryScrollPositionItem = viewModel.categoryScrollPositionItem,
-                            categoryScrollPositionOffset = viewModel.categoryScrollPositionOffset,
-                            selectedCategory = selectedCategory,
-                            onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                            onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
-                            onToggleTheme = application::toggleTheme
-                        )
-
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colors.background)
-                        ) {
-                            if (loading) {
-                                LoadingRecipeListShimmer(imageHeight = 250.dp)
-                            } else {
-                                LazyColumn(
-                                    content = {
-                                        items(recipes) { recipe ->
-                                            RecipeCard(recipe = recipe, onClick = {})
-                                        }
-                                    },
-                                    contentPadding = PaddingValues(
-                                        horizontal = 16.dp,
-                                        vertical = 8.dp,
+                    Scaffold(
+                        topBar = {
+                            SearchAppBar(
+                                query = query,
+                                onQueryChanged = viewModel::onQueryChanged,
+                                onExecuteSearch = viewModel::newSearch,
+                                categoryScrollPositionItem = viewModel.categoryScrollPositionItem,
+                                categoryScrollPositionOffset = viewModel.categoryScrollPositionOffset,
+                                selectedCategory = selectedCategory,
+                                onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
+                                onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
+                                onToggleTheme = application::toggleTheme
+                            )
+                        },
+                        bottomBar = {
+                            MyBottomBar()
+                        },
+                        drawerContent = {
+                            MyDrawer()
+                        },
+                        content = {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colors.surface)
+                            ) {
+                                if (loading) {
+                                    LoadingRecipeListShimmer(imageHeight = 250.dp)
+                                } else {
+                                    LazyColumn(
+                                        content = {
+                                            items(recipes) { recipe ->
+                                                RecipeCard(recipe = recipe, onClick = {})
+                                            }
+                                        },
+                                        contentPadding = PaddingValues(
+                                            horizontal = 16.dp,
+                                            vertical = 8.dp,
+                                        )
                                     )
+                                }
+                                CircularIndeterminateProgressBar(
+                                    isDisplayed = loading,
+                                    verticalBias = 0.3f,
                                 )
                             }
-                            CircularIndeterminateProgressBar(
-                                isDisplayed = loading,
-                                verticalBias = 0.3f,
-                            )
-                        }
-                    }
+                        },
+                    )
                 }
             }
         }
@@ -118,5 +130,37 @@ fun GradientDemo() {
                 .fillMaxSize()
                 .background(brush = brush)
         )
+    }
+}
+
+@Composable
+fun MyBottomBar() {
+    BottomNavigation(elevation = 12.dp) {
+        BottomNavigationItem(
+            icon = { Icon(Icons.Default.BrokenImage, contentDescription = null) },
+            selected = false,
+            onClick = { /*TODO*/ }
+        )
+        BottomNavigationItem(
+            icon = { Icon(Icons.Default.Search, contentDescription = null) },
+            selected = true,
+            onClick = { /*TODO*/ }
+        )
+        BottomNavigationItem(
+            icon = { Icon(Icons.Default.AccountBalanceWallet, contentDescription = null) },
+            selected = false,
+            onClick = { /*TODO*/ }
+        )
+    }
+}
+
+@Composable
+fun MyDrawer() {
+    Column {
+        Text(text = "Text 1")
+        Text(text = "Text 2")
+        Text(text = "Text 3")
+        Text(text = "Text 4")
+        Text(text = "Text 5")
     }
 }
