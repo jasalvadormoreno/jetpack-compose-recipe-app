@@ -55,7 +55,7 @@ fun ShimmerRecipeCardItem(
 
     Column(modifier = Modifier.padding(padding)) {
         Surface(
-            shape = MaterialTheme.shapes.small,
+            shape = MaterialTheme.shapes.medium,
         ) {
             Spacer(
                 modifier = Modifier
@@ -68,7 +68,7 @@ fun ShimmerRecipeCardItem(
         Spacer(modifier = Modifier.height(8.dp))
 
         Surface(
-            shape = MaterialTheme.shapes.small,
+            shape = MaterialTheme.shapes.medium,
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
             Spacer(

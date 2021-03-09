@@ -22,7 +22,7 @@ const val DEFAULT_RECIPE_IMAGE = R.drawable.empty_plate
 @Composable
 fun RecipeCard(recipe: Recipe, onClick: () -> Unit) {
     Card(
-        shape = MaterialTheme.shapes.small,
+        shape = MaterialTheme.shapes.medium,
         modifier = Modifier
             .padding(top = 8.dp, bottom = 8.dp)
             .fillMaxWidth()
@@ -54,7 +54,7 @@ fun RecipeCard(recipe: Recipe, onClick: () -> Unit) {
                         modifier = Modifier
                             .fillMaxWidth(0.85f)
                             .wrapContentWidth(Alignment.Start),
-                        style = MaterialTheme.typography.h5,
+                        style = MaterialTheme.typography.h3,
                     )
                     Text(
                         text = recipe.rating.toString(),
@@ -62,7 +62,7 @@ fun RecipeCard(recipe: Recipe, onClick: () -> Unit) {
                             .fillMaxWidth()
                             .wrapContentWidth(Alignment.End)
                             .align(Alignment.CenterVertically),
-                        style = MaterialTheme.typography.h6,
+                        style = MaterialTheme.typography.h5,
                     )
                 }
             }

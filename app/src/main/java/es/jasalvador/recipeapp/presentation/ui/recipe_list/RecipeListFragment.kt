@@ -72,11 +72,17 @@ class RecipeListFragment : Fragment() {
                             if (loading) {
                                 LoadingRecipeListShimmer(imageHeight = 250.dp)
                             } else {
-                                LazyColumn(content = {
-                                    items(recipes) { recipe ->
-                                        RecipeCard(recipe = recipe, onClick = {})
-                                    }
-                                })
+                                LazyColumn(
+                                    content = {
+                                        items(recipes) { recipe ->
+                                            RecipeCard(recipe = recipe, onClick = {})
+                                        }
+                                    },
+                                    contentPadding = PaddingValues(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp,
+                                    )
+                                )
                             }
                             CircularIndeterminateProgressBar(
                                 isDisplayed = loading,

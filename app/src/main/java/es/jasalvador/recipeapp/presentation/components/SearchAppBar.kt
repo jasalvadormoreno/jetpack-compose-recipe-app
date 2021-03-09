@@ -68,7 +68,7 @@ fun SearchAppBar(
                         keyboardController?.hideSoftwareKeyboard()
                     }),
                     leadingIcon = { Icon(Icons.Filled.Search, "") },
-                    textStyle = TextStyle(color = MaterialTheme.colors.onSurface),
+                    textStyle = MaterialTheme.typography.button,
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         backgroundColor = MaterialTheme.colors.surface
                     ),
