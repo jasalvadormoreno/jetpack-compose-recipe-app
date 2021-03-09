@@ -24,11 +24,17 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import dagger.hilt.android.AndroidEntryPoint
+import es.jasalvador.recipeapp.BaseApp
 import es.jasalvador.recipeapp.presentation.components.*
+import es.jasalvador.recipeapp.presentation.theme.AppTheme
+import javax.inject.Inject
 
 @ExperimentalComposeUiApi
 @AndroidEntryPoint
 class RecipeListFragment : Fragment() {
+
+    @Inject
+    lateinit var application: BaseApp
 
     private val viewModel: RecipeListViewModel by viewModels()
 
@@ -39,36 +45,44 @@ class RecipeListFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                val recipes = viewModel.recipes.value
-                val query = viewModel.query.value
-                val loading = viewModel.loading.value
-                val selectedCategory = viewModel.selectedCategory.value
+                AppTheme(darkTheme = application.isDark.value) {
+                    val recipes = viewModel.recipes.value
+                    val query = viewModel.query.value
+                    val loading = viewModel.loading.value
+                    val selectedCategory = viewModel.selectedCategory.value
 
-                Column {
-                    SearchAppBar(
-                        query = query,
-                        onQueryChanged = viewModel::onQueryChanged,
-                        onExecuteSearch = viewModel::newSearch,
-                        categoryScrollPositionItem = viewModel.categoryScrollPositionItem,
-                        categoryScrollPositionOffset = viewModel.categoryScrollPositionOffset,
-                        selectedCategory = selectedCategory,
-                        onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
-                        onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition
-                    )
+                    Column {
+                        SearchAppBar(
+                            query = query,
+                            onQueryChanged = viewModel::onQueryChanged,
+                            onExecuteSearch = viewModel::newSearch,
+                            categoryScrollPositionItem = viewModel.categoryScrollPositionItem,
+                            categoryScrollPositionOffset = viewModel.categoryScrollPositionOffset,
+                            selectedCategory = selectedCategory,
+                            onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
+                            onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
+                            onToggleTheme = application::toggleTheme
+                        )
 
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        if (loading) {
-                            LoadingRecipeListShimmer(imageHeight = 250.dp)
-                        } else {
-                            LazyColumn(content = {
-                                items(recipes) { recipe ->
-                                    RecipeCard(recipe = recipe, onClick = {})
-                                }
-                            })
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colors.background)
+                        ) {
+                            if (loading) {
+                                LoadingRecipeListShimmer(imageHeight = 250.dp)
+                            } else {
+                                LazyColumn(content = {
+                                    items(recipes) { recipe ->
+                                        RecipeCard(recipe = recipe, onClick = {})
+                                    }
+                                })
+                            }
+                            CircularIndeterminateProgressBar(
+                                isDisplayed = loading,
+                                verticalBias = 0.3f,
+                            )
                         }
-                        CircularIndeterminateProgressBar(isDisplayed = loading, verticalBias = 0.3f)
                     }
                 }
             }

@@ -8,9 +8,12 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -18,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import es.jasalvador.recipeapp.presentation.ui.recipe_list.FoodCategory
 import es.jasalvador.recipeapp.presentation.ui.recipe_list.getAllFoodCategories
 import kotlinx.coroutines.launch
@@ -33,6 +37,7 @@ fun SearchAppBar(
     selectedCategory: FoodCategory?,
     onSelectedCategoryChanged: (String) -> Unit,
     onChangeCategoryScrollPosition: (Int, Int) -> Unit,
+    onToggleTheme: () -> Unit,
 ) {
     Surface(
         modifier = Modifier
@@ -68,6 +73,22 @@ fun SearchAppBar(
                         backgroundColor = MaterialTheme.colors.surface
                     ),
                 )
+
+                ConstraintLayout(
+                    modifier = Modifier.align(Alignment.CenterVertically)
+                ) {
+                    val menu = createRef()
+                    IconButton(
+                        onClick = { onToggleTheme() },
+                        modifier = Modifier.constrainAs(menu) {
+                            end.linkTo(parent.end)
+                            top.linkTo(parent.top)
+                            bottom.linkTo(parent.bottom)
+                        },
+                    ) {
+                        Icon(imageVector = Icons.Filled.MoreVert, contentDescription = null)
+                    }
+                }
             }
 
             val state = rememberLazyListState()
