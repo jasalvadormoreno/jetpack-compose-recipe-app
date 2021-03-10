@@ -5,31 +5,32 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBalanceWallet
-import androidx.compose.material.icons.filled.BrokenImage
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import es.jasalvador.recipeapp.BaseApp
-import es.jasalvador.recipeapp.presentation.components.*
+import es.jasalvador.recipeapp.presentation.components.CircularIndeterminateProgressBar
+import es.jasalvador.recipeapp.presentation.components.LoadingRecipeListShimmer
+import es.jasalvador.recipeapp.presentation.components.RecipeCard
+import es.jasalvador.recipeapp.presentation.components.SearchAppBar
 import es.jasalvador.recipeapp.presentation.theme.AppTheme
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @ExperimentalComposeUiApi
@@ -48,6 +49,32 @@ class RecipeListFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
+
+//                val isShowing = remember { mutableStateOf(false) }
+                val snackbarHostState = remember { SnackbarHostState() }
+
+                Column {
+                    Button(onClick = {
+                        lifecycleScope.launch {
+                            snackbarHostState.showSnackbar(
+                                message = "Hey look a snackbar",
+                                actionLabel = "Hide",
+                                duration = SnackbarDuration.Short,
+                            )
+                        }
+                    }) {
+                        Text(text = "Show snackbar")
+                    }
+                    DecoupledSnackbarDemo(snackbarHostState = snackbarHostState)
+//                    SnackbarDemo(
+//                        isShowing = isShowing.value,
+//                        onHideSnackbar = {
+//                            isShowing.value = isShowing.value.not()
+//                        },
+//                    )
+                }
+
+                return@setContent
                 AppTheme(darkTheme = application.isDark.value) {
                     val recipes = viewModel.recipes.value
                     val query = viewModel.query.value
@@ -67,12 +94,6 @@ class RecipeListFragment : Fragment() {
                                 onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
                                 onToggleTheme = application::toggleTheme
                             )
-                        },
-                        bottomBar = {
-                            MyBottomBar()
-                        },
-                        drawerContent = {
-                            MyDrawer()
                         },
                         content = {
                             Box(
@@ -109,58 +130,69 @@ class RecipeListFragment : Fragment() {
 }
 
 @Composable
-fun GradientDemo() {
-    val colors = listOf(
-        Color.Blue,
-        Color.Red,
-        Color.Blue,
-    )
-
-    val brush = linearGradient(
-        colors,
-        start = Offset(200f, 200f),
-        end = Offset(400f, 400f),
-    )
-
-    Surface(
-        shape = MaterialTheme.shapes.small,
-    ) {
-        Spacer(
+fun DecoupledSnackbarDemo(
+    snackbarHostState: SnackbarHostState,
+) {
+    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+        val snackbar = createRef()
+        SnackbarHost(
             modifier = Modifier
-                .fillMaxSize()
-                .background(brush = brush)
+                .constrainAs(snackbar) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                },
+            hostState = snackbarHostState,
+            snackbar = {
+                Snackbar(
+                    action = {
+                        TextButton(
+                            onClick = {
+                                snackbarHostState.currentSnackbarData?.dismiss()
+                            },
+                        ) {
+                            Text(
+                                text = snackbarHostState.currentSnackbarData?.actionLabel ?: "",
+                                style = TextStyle(Color.White),
+                            )
+                        }
+                    },
+                ) {
+                    Text(text = snackbarHostState.currentSnackbarData?.message ?: "")
+                }
+            }
         )
     }
 }
 
 @Composable
-fun MyBottomBar() {
-    BottomNavigation(elevation = 12.dp) {
-        BottomNavigationItem(
-            icon = { Icon(Icons.Default.BrokenImage, contentDescription = null) },
-            selected = false,
-            onClick = { /*TODO*/ }
-        )
-        BottomNavigationItem(
-            icon = { Icon(Icons.Default.Search, contentDescription = null) },
-            selected = true,
-            onClick = { /*TODO*/ }
-        )
-        BottomNavigationItem(
-            icon = { Icon(Icons.Default.AccountBalanceWallet, contentDescription = null) },
-            selected = false,
-            onClick = { /*TODO*/ }
-        )
+fun SnackbarDemo(
+    isShowing: Boolean,
+    onHideSnackbar: () -> Unit,
+) {
+    if (isShowing) {
+        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+            val snackbar = createRef()
+            Snackbar(
+                modifier = Modifier
+                    .constrainAs(snackbar) {
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                action = {
+                    Text(
+                        text = "Hide",
+                        modifier = Modifier
+                            .clickable(onClick = onHideSnackbar),
+                        style = MaterialTheme.typography.button,
+                        color = MaterialTheme.colors.primary,
+                    )
+                },
+            ) {
+                Text(text = "Hey look a Snackbar")
+            }
+        }
     }
 }
 
-@Composable
-fun MyDrawer() {
-    Column {
-        Text(text = "Text 1")
-        Text(text = "Text 2")
-        Text(text = "Text 3")
-        Text(text = "Text 4")
-        Text(text = "Text 5")
-    }
-}
