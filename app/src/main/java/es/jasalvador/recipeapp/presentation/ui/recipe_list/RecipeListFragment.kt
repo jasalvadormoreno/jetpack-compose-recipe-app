@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +57,8 @@ class RecipeListFragment : Fragment() {
                     val loading = viewModel.loading.value
                     val selectedCategory = viewModel.selectedCategory.value
 
+                    val page = viewModel.page.value
+
                     val scaffoldState = rememberScaffoldState()
 
                     Scaffold(
@@ -92,12 +95,16 @@ class RecipeListFragment : Fragment() {
                                     .fillMaxSize()
                                     .background(MaterialTheme.colors.surface)
                             ) {
-                                if (loading) {
+                                if (loading && recipes.isEmpty()) {
                                     LoadingRecipeListShimmer(imageHeight = 250.dp)
                                 } else {
                                     LazyColumn(
                                         content = {
-                                            items(recipes) { recipe ->
+                                            itemsIndexed(recipes) { index, recipe ->
+                                                viewModel.onChangeRecipeScrollPosition(index)
+                                                if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
+                                                    viewModel.nextPage()
+                                                }
                                                 RecipeCard(recipe = recipe, onClick = {})
                                             }
                                         },
