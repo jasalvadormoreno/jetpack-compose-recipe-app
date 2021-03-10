@@ -12,14 +12,13 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import es.jasalvador.recipeapp.BaseApp
-import es.jasalvador.recipeapp.presentation.components.CircularIndeterminateProgressBar
-import es.jasalvador.recipeapp.presentation.components.DefaultSnackbar
-import es.jasalvador.recipeapp.presentation.components.RecipeView
+import es.jasalvador.recipeapp.presentation.components.*
 import es.jasalvador.recipeapp.presentation.components.util.SnackbarController
 import es.jasalvador.recipeapp.presentation.theme.AppTheme
 import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeEvent.GetRecipeEvent
@@ -61,7 +60,7 @@ class RecipeFragment : Fragment() {
                     ) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             if (loading && recipe == null) {
-                                Text(text = "Loading...")
+                                LoadingRecipeShimmer(imageHeight = IMAGE_HEIGHT.dp)
                             } else {
                                 recipe?.let {
                                     if (recipe.id == 1) {
