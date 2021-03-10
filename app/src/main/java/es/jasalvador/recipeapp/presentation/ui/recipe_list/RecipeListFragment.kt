@@ -13,6 +13,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,10 +26,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import es.jasalvador.recipeapp.BaseApp
-import es.jasalvador.recipeapp.presentation.components.CircularIndeterminateProgressBar
-import es.jasalvador.recipeapp.presentation.components.LoadingRecipeListShimmer
-import es.jasalvador.recipeapp.presentation.components.RecipeCard
-import es.jasalvador.recipeapp.presentation.components.SearchAppBar
+import es.jasalvador.recipeapp.presentation.components.*
+import es.jasalvador.recipeapp.presentation.components.util.SnackbarController
 import es.jasalvador.recipeapp.presentation.theme.AppTheme
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,6 +39,8 @@ class RecipeListFragment : Fragment() {
     @Inject
     lateinit var application: BaseApp
 
+    private val snackbarController = SnackbarController(lifecycleScope)
+
     private val viewModel: RecipeListViewModel by viewModels()
 
     override fun onCreateView(
@@ -49,44 +50,34 @@ class RecipeListFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-
-//                val isShowing = remember { mutableStateOf(false) }
-                val snackbarHostState = remember { SnackbarHostState() }
-
-                Column {
-                    Button(onClick = {
-                        lifecycleScope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = "Hey look a snackbar",
-                                actionLabel = "Hide",
-                                duration = SnackbarDuration.Short,
-                            )
-                        }
-                    }) {
-                        Text(text = "Show snackbar")
-                    }
-                    DecoupledSnackbarDemo(snackbarHostState = snackbarHostState)
-//                    SnackbarDemo(
-//                        isShowing = isShowing.value,
-//                        onHideSnackbar = {
-//                            isShowing.value = isShowing.value.not()
-//                        },
-//                    )
-                }
-
-                return@setContent
                 AppTheme(darkTheme = application.isDark.value) {
                     val recipes = viewModel.recipes.value
                     val query = viewModel.query.value
                     val loading = viewModel.loading.value
                     val selectedCategory = viewModel.selectedCategory.value
 
+                    val scaffoldState = rememberScaffoldState()
+
                     Scaffold(
+                        scaffoldState = scaffoldState,
+                        snackbarHost = {
+                            scaffoldState.snackbarHostState
+                        },
                         topBar = {
                             SearchAppBar(
                                 query = query,
                                 onQueryChanged = viewModel::onQueryChanged,
-                                onExecuteSearch = viewModel::newSearch,
+                                onExecuteSearch = {
+                                    if (viewModel.selectedCategory.value?.value == "Milk") {
+                                        snackbarController.showSnackbar(
+                                            scaffoldState = scaffoldState,
+                                            message = "Invalid category: Milk",
+                                            actionLabel = "Hide",
+                                        )
+                                    } else {
+                                        viewModel.newSearch()
+                                    }
+                                },
                                 categoryScrollPositionItem = viewModel.categoryScrollPositionItem,
                                 categoryScrollPositionOffset = viewModel.categoryScrollPositionOffset,
                                 selectedCategory = selectedCategory,
@@ -119,6 +110,13 @@ class RecipeListFragment : Fragment() {
                                 CircularIndeterminateProgressBar(
                                     isDisplayed = loading,
                                     verticalBias = 0.3f,
+                                )
+                                DefaultSnackbar(
+                                    snackbarHostState = scaffoldState.snackbarHostState,
+                                    onDismiss = {
+                                        scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                                    },
+                                    modifier = Modifier.align(Alignment.BottomCenter),
                                 )
                             }
                         },
