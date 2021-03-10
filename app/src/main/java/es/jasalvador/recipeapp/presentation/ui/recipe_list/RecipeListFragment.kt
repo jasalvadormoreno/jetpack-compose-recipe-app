@@ -78,7 +78,7 @@ class RecipeListFragment : Fragment() {
                                             actionLabel = "Hide",
                                         )
                                     } else {
-                                        viewModel.newSearch()
+                                        viewModel.onTriggerEvent(RecipeListEvent.NewSearchEvent)
                                     }
                                 },
                                 categoryScrollPositionItem = viewModel.categoryScrollPositionItem,
@@ -103,7 +103,7 @@ class RecipeListFragment : Fragment() {
                                             itemsIndexed(recipes) { index, recipe ->
                                                 viewModel.onChangeRecipeScrollPosition(index)
                                                 if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
-                                                    viewModel.nextPage()
+                                                    viewModel.onTriggerEvent(RecipeListEvent.NextPageEvent)
                                                 }
                                                 RecipeCard(recipe = recipe, onClick = {})
                                             }
