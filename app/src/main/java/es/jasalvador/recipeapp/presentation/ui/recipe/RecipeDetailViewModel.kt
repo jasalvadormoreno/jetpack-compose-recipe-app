@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.jasalvador.recipeapp.domain.model.Recipe
-import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeEvent.*
+import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailEvent.*
 import es.jasalvador.recipeapp.repository.RecipeRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -18,7 +18,7 @@ import javax.inject.Named
 const val STATE_KEY_RECIPE = "state.key.recipeId"
 
 @HiltViewModel
-class RecipeViewModel @Inject constructor(
+class RecipeDetailViewModel @Inject constructor(
     private val recipeRepository: RecipeRepository,
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
@@ -26,18 +26,19 @@ class RecipeViewModel @Inject constructor(
 
     val recipe: MutableState<Recipe?> = mutableStateOf(null)
     val loading = mutableStateOf(false)
+    val onLoad: MutableState<Boolean> = mutableStateOf(false)
 
     init {
         state.get<Int>(STATE_KEY_RECIPE)?.let { recipeId ->
-            onTriggerEvent(GetRecipeEvent(recipeId))
+            onTriggerEvent(GetRecipeDetailEvent(recipeId))
         }
     }
 
-    fun onTriggerEvent(event: RecipeEvent) {
+    fun onTriggerEvent(event: RecipeDetailEvent) {
         viewModelScope.launch {
             try {
                 when (event) {
-                    is GetRecipeEvent -> {
+                    is GetRecipeDetailEvent -> {
                         if (recipe.value == null) {
                             getRecipe(event.id)
                         }

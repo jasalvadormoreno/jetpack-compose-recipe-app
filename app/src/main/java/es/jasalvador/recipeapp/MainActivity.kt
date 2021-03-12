@@ -12,7 +12,7 @@ import androidx.navigation.compose.*
 import dagger.hilt.android.AndroidEntryPoint
 import es.jasalvador.recipeapp.presentation.navigation.Screen
 import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailScreen
-import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeViewModel
+import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailViewModel
 import es.jasalvador.recipeapp.presentation.ui.recipe_list.RecipeListScreen
 import es.jasalvador.recipeapp.presentation.ui.recipe_list.RecipeListViewModel
 
@@ -37,13 +37,13 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 composable(
-                    route = "${Screen.RecipeDetail.route}/recipeId",
+                    route = "${Screen.RecipeDetail.route}/{recipeId}",
                     arguments = listOf(navArgument("recipeId") {
                         type = NavType.IntType
                     })
                 ) { navBackStackEntry ->
                     val factory = HiltViewModelFactory(LocalContext.current, navBackStackEntry)
-                    val viewModel: RecipeViewModel = viewModel("RecipeDetail", factory)
+                    val viewModel: RecipeDetailViewModel = viewModel("RecipeDetail", factory)
                     RecipeDetailScreen(
                         isDarkTheme = (application as BaseApp).isDark.value,
                         recipeId = navBackStackEntry.arguments?.getInt("recipeId"),
