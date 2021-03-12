@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import es.jasalvador.recipeapp.domain.model.Recipe
+import es.jasalvador.recipeapp.presentation.navigation.Screen
 import es.jasalvador.recipeapp.presentation.ui.recipe_list.PAGE_SIZE
 import es.jasalvador.recipeapp.presentation.ui.recipe_list.RecipeListEvent
 
@@ -18,10 +19,10 @@ import es.jasalvador.recipeapp.presentation.ui.recipe_list.RecipeListEvent
 fun RecipeList(
     loading: Boolean,
     recipes: List<Recipe>,
-    onChangeRecipeScrollPosition: (Int) -> Unit,
+    onChangeScrollPosition: (Int) -> Unit,
     page: Int,
     onNextPage: (RecipeListEvent) -> Unit,
-    onNavigateToRecipeDetailScreen: (Int) -> Unit
+    onNavigateToRecipeDetailScreen: (String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -34,12 +35,13 @@ fun RecipeList(
             LazyColumn(
                 content = {
                     itemsIndexed(recipes) { index, recipe ->
-                        onChangeRecipeScrollPosition(index)
+                        onChangeScrollPosition(index)
                         if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
                             onNextPage(RecipeListEvent.NextPageEvent)
                         }
                         RecipeCard(recipe = recipe, onClick = {
-                            recipe.id?.let { onNavigateToRecipeDetailScreen(it) }
+                            val route = "${Screen.RecipeDetail.route}/${recipe.id}"
+                            onNavigateToRecipeDetailScreen(route)
                         })
                     }
                 },

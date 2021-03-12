@@ -13,6 +13,7 @@ import es.jasalvador.recipeapp.presentation.theme.AppTheme
 fun RecipeListScreen(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
+    onNavigateToRecipeDetailScreen: (String) -> Unit,
     viewModel: RecipeListViewModel,
 ) {
     val recipes = viewModel.recipes.value
@@ -53,14 +54,12 @@ fun RecipeListScreen(
                 RecipeList(
                     loading = loading,
                     recipes = recipes,
-                    onChangeRecipeScrollPosition = viewModel::onChangeRecipeScrollPosition,
+                    onChangeScrollPosition = viewModel::onChangeRecipeScrollPosition,
                     page = page,
                     onNextPage = {
                         viewModel.onTriggerEvent(it)
                     },
-                    onNavigateToRecipeDetailScreen = {
-
-                    }
+                    onNavigateToRecipeDetailScreen = onNavigateToRecipeDetailScreen,
                 )
             },
         )
