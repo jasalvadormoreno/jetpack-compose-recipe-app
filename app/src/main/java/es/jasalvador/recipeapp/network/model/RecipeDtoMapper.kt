@@ -2,6 +2,7 @@ package es.jasalvador.recipeapp.network.model
 
 import es.jasalvador.recipeapp.domain.model.Recipe
 import es.jasalvador.recipeapp.domain.util.DomainMapper
+import es.jasalvador.recipeapp.util.DateUtils
 
 class RecipeDtoMapper : DomainMapper<RecipeDto, Recipe> {
 
@@ -13,11 +14,9 @@ class RecipeDtoMapper : DomainMapper<RecipeDto, Recipe> {
             featuredImage = model.featuredImage,
             rating = model.rating,
             sourceUrl = model.sourceUrl,
-            description = model.description,
-            cookingInstructions = model.cookingInstructions,
-            ingredients = model.ingredients ?: listOf(),
-            dateAdded = model.dateAdded,
-            dateUpdated = model.dateUpdated,
+            ingredients = model.ingredients,
+            dateAdded = DateUtils.longToDate(model.longDateAdded),
+            dateUpdated = DateUtils.longToDate(model.longDateUpdated),
         )
     }
 
@@ -29,11 +28,9 @@ class RecipeDtoMapper : DomainMapper<RecipeDto, Recipe> {
             featuredImage = domainModel.featuredImage,
             rating = domainModel.rating,
             sourceUrl = domainModel.sourceUrl,
-            description = domainModel.description,
-            cookingInstructions = domainModel.cookingInstructions,
             ingredients = domainModel.ingredients,
-            dateAdded = domainModel.dateAdded,
-            dateUpdated = domainModel.dateUpdated,
+            longDateAdded = DateUtils.dateToLong(domainModel.dateAdded),
+            longDateUpdated = DateUtils.dateToLong(domainModel.dateUpdated),
         )
     }
 
