@@ -69,12 +69,3 @@ fun RecipeCard(recipe: Recipe, onClick: () -> Unit) {
         }
     }
 }
-
-@Preview
-@Composable
-fun RecipeCardPreview() {
-    RecipeCard(recipe = Recipe(
-        title = "Pizza Potato Skins",
-        rating = 16,
-    ), onClick = { /*TODO*/ })
-}
