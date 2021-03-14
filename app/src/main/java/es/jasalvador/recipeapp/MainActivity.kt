@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                     val viewModel: RecipeListViewModel = viewModel("RecipeList", factory)
                     RecipeListScreen(
                         isDarkTheme = (application as BaseApp).isDark.value,
-                        onToggleTheme = { (application as BaseApp)::toggleTheme },
+                        onToggleTheme = { (application as BaseApp).toggleTheme() },
                         onNavigateToRecipeDetailScreen = navController::navigate,
                         viewModel = viewModel,
                     )

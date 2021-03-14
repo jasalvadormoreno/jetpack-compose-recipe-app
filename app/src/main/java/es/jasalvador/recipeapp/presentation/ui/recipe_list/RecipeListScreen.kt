@@ -47,7 +47,7 @@ fun RecipeListScreen(
                     selectedCategory = selectedCategory,
                     onSelectedCategoryChanged = viewModel::onSelectedCategoryChanged,
                     onChangeCategoryScrollPosition = viewModel::onChangeCategoryScrollPosition,
-                    onToggleTheme = onToggleTheme
+                    onToggleTheme = { onToggleTheme() }
                 )
             },
             content = {
