@@ -8,8 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.jasalvador.recipeapp.domain.model.Recipe
+import es.jasalvador.recipeapp.interactors.recipe_list.SearchRecipes
 import es.jasalvador.recipeapp.repository.RecipeRepository
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -23,6 +25,7 @@ const val STATE_KEY_SELECTED_CATEGORY = "recipe.state.query.selected_category"
 
 @HiltViewModel
 class RecipeListViewModel @Inject constructor(
+    private val searchRecipes: SearchRecipes,
     private val repository: RecipeRepository,
     @Named("auth_token") private val token: String,
     private val savedStateHandle: SavedStateHandle,
@@ -85,38 +88,40 @@ class RecipeListViewModel @Inject constructor(
         }
     }
 
-    private suspend fun newSearch() {
-        loading.value = true
-
+    private fun newSearch() {
         resetSearchState()
 
-        delay(3000)
-
-        val result = repository.search(
+        searchRecipes.execute(
             token = token,
-            page = 1,
+            page = page.value,
             query = query.value,
-        )
-        recipes.value = result
-        loading.value = false
+        ).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let { recipes.value = it }
+            dataState.error?.let { error ->
+                Log.e("RecipeListViewModel", "newSearch: $error")
+            }
+        }.launchIn(viewModelScope)
     }
 
-    private suspend fun nextPage() {
+    private fun nextPage() {
         if ((recipeListScrollPosition + 1) >= (page.value * PAGE_SIZE)) {
-            loading.value = true
             incrementPage()
-
-            delay(1000)
-
             if (page.value > 1) {
-                val result = repository.search(
+                searchRecipes.execute(
                     token = token,
                     page = page.value,
                     query = query.value,
-                )
-                appendRecipes(result)
+                ).onEach { dataState ->
+                    loading.value = dataState.loading
+
+                    dataState.data?.let { appendRecipes(it) }
+                    dataState.error?.let { error ->
+                        Log.e("RecipeListViewModel", "nextPage: $error")
+                    }
+                }.launchIn(viewModelScope)
             }
-            loading.value = false
         }
     }
 

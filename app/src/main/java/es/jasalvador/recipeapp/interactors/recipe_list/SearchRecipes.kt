@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class SearchRecipes(
-    private val recipeDao: RecipeDao,
     private val recipeService: RecipeService,
+    private val recipeDao: RecipeDao,
     private val dtoMapper: RecipeDtoMapper,
     private val entityMapper: RecipeEntityMapper,
 ) {
