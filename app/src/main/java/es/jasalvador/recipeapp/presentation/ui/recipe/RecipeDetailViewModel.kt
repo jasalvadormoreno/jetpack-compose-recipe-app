@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import es.jasalvador.recipeapp.domain.model.Recipe
 import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailEvent.*
 import es.jasalvador.recipeapp.repository.RecipeRepository
+import es.jasalvador.recipeapp.util.TAG
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,7 +46,7 @@ class RecipeDetailViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
-                Log.e("RecipeViewModel", "onTriggerEvent: Exception ${e}, ${e.cause}")
+                Log.e(TAG, "onTriggerEvent: Exception ${e}, ${e.cause}")
             }
         }
     }

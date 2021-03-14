@@ -8,8 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.jasalvador.recipeapp.domain.model.Recipe
+import es.jasalvador.recipeapp.interactors.recipe_list.RestoreRecipes
 import es.jasalvador.recipeapp.interactors.recipe_list.SearchRecipes
-import es.jasalvador.recipeapp.repository.RecipeRepository
+import es.jasalvador.recipeapp.util.TAG
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -26,7 +27,7 @@ const val STATE_KEY_SELECTED_CATEGORY = "recipe.state.query.selected_category"
 @HiltViewModel
 class RecipeListViewModel @Inject constructor(
     private val searchRecipes: SearchRecipes,
-    private val repository: RecipeRepository,
+    private val restoreRecipes: RestoreRecipes,
     @Named("auth_token") private val token: String,
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -66,26 +67,20 @@ class RecipeListViewModel @Inject constructor(
                     is RecipeListEvent.RestoreStateEvent -> restoreState()
                 }
             } catch (e: Exception) {
-                Log.e("RecipeListViewModel", "onTriggerEvent: Exception ${e}, ${e.cause}")
+                Log.e(TAG, "onTriggerEvent: Exception ${e}, ${e.cause}")
             }
         }
     }
 
-    private suspend fun restoreState() {
-        loading.value = true
-        val results: MutableList<Recipe> = mutableListOf()
-        for (p in 1..page.value) {
-            val result = repository.search(
-                token = token,
-                page = p,
-                query = query.value,
-            )
-            results.addAll(result)
-            if (p == page.value) {
-                recipes.value = results
-                loading.value = false
+    private fun restoreState() {
+        restoreRecipes.execute(page.value, query.value).onEach { dataState ->
+            loading.value = dataState.loading
+
+            dataState.data?.let { recipes.value = it }
+            dataState.error?.let { error ->
+                Log.e(TAG, "restoreState: $error")
             }
-        }
+        }.launchIn(viewModelScope)
     }
 
     private fun newSearch() {
@@ -100,7 +95,7 @@ class RecipeListViewModel @Inject constructor(
 
             dataState.data?.let { recipes.value = it }
             dataState.error?.let { error ->
-                Log.e("RecipeListViewModel", "newSearch: $error")
+                Log.e(TAG, "newSearch: $error")
             }
         }.launchIn(viewModelScope)
     }
@@ -118,7 +113,7 @@ class RecipeListViewModel @Inject constructor(
 
                     dataState.data?.let { appendRecipes(it) }
                     dataState.error?.let { error ->
-                        Log.e("RecipeListViewModel", "nextPage: $error")
+                        Log.e(TAG, "nextPage: $error")
                     }
                 }.launchIn(viewModelScope)
             }

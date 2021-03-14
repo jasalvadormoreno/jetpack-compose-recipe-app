@@ -6,7 +6,6 @@ import es.jasalvador.recipeapp.domain.data.DataState
 import es.jasalvador.recipeapp.domain.model.Recipe
 import es.jasalvador.recipeapp.network.RecipeService
 import es.jasalvador.recipeapp.network.model.RecipeDtoMapper
-import es.jasalvador.recipeapp.util.RECIPE_PAGINATION_PAGE_SIZE
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -33,12 +32,11 @@ class SearchRecipes(
             recipeDao.insertRecipes(entityMapper.fromDomainList(recipes))
 
             val cacheResult = if (query.isBlank()) {
-                recipeDao.getAllRecipes(page = page, pageSize = RECIPE_PAGINATION_PAGE_SIZE)
+                recipeDao.getAllRecipes(page = page)
             } else {
                 recipeDao.searchRecipes(
                     query = query,
                     page = page,
-                    pageSize = RECIPE_PAGINATION_PAGE_SIZE,
                 )
             }
 
