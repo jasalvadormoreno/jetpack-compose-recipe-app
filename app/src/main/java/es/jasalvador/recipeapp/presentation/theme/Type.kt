@@ -70,7 +70,6 @@ val QuickSandTypography = Typography(
         fontFamily = QuickSand,
         fontWeight = FontWeight.W400,
         fontSize = 15.sp,
-        color = Color.White,
     ),
     caption = TextStyle(
         fontFamily = QuickSand,
