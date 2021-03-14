@@ -35,6 +35,14 @@ class RecipeEntityMapper : DomainMapper<RecipeEntity, Recipe> {
         )
     }
 
+    fun toDomainList(initial: List<RecipeEntity>): List<Recipe> {
+        return initial.map { mapToDomainModel(it) }
+    }
+
+    fun fromDomainList(initial: List<Recipe>): List<RecipeEntity> {
+        return initial.map { mapFromDomainModel(it) }
+    }
+
     private fun convertIngredientListToString(ingredients: List<String>): String {
         return ingredients.joinToString(",")
     }

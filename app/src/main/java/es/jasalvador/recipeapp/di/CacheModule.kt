@@ -8,6 +8,7 @@ import dagger.hilt.components.SingletonComponent
 import es.jasalvador.recipeapp.BaseApp
 import es.jasalvador.recipeapp.cache.RecipeDao
 import es.jasalvador.recipeapp.cache.database.AppDatabase
+import es.jasalvador.recipeapp.cache.model.RecipeEntityMapper
 import javax.inject.Singleton
 
 @Module
@@ -26,5 +27,11 @@ object CacheModule {
     @Provides
     fun provideRecipeDao(db: AppDatabase): RecipeDao {
         return db.recipeDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideCacheRecipeMapper(): RecipeEntityMapper {
+        return RecipeEntityMapper()
     }
 }
