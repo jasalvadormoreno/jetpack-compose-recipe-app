@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import es.jasalvador.recipeapp.domain.model.Recipe
 import es.jasalvador.recipeapp.interactors.recipe_list.RestoreRecipes
 import es.jasalvador.recipeapp.interactors.recipe_list.SearchRecipes
+import es.jasalvador.recipeapp.presentation.ui.util.DialogQueue
 import es.jasalvador.recipeapp.util.TAG
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -42,6 +43,8 @@ class RecipeListViewModel @Inject constructor(
 
     val page = mutableStateOf(1)
     private var recipeListScrollPosition = 0
+
+    val dialogQueue = DialogQueue()
 
     init {
         savedStateHandle.get<Int>(STATE_KEY_PAGE)?.let { p -> setPage(p) }
@@ -77,9 +80,7 @@ class RecipeListViewModel @Inject constructor(
             loading.value = dataState.loading
 
             dataState.data?.let { recipes.value = it }
-            dataState.error?.let { error ->
-                Log.e(TAG, "restoreState: $error")
-            }
+            dataState.error?.let { error -> dialogQueue.appendErrorMessage("Error", error) }
         }.launchIn(viewModelScope)
     }
 
@@ -94,9 +95,7 @@ class RecipeListViewModel @Inject constructor(
             loading.value = dataState.loading
 
             dataState.data?.let { recipes.value = it }
-            dataState.error?.let { error ->
-                Log.e(TAG, "newSearch: $error")
-            }
+            dataState.error?.let { error -> dialogQueue.appendErrorMessage("Error", error) }
         }.launchIn(viewModelScope)
     }
 
@@ -112,9 +111,7 @@ class RecipeListViewModel @Inject constructor(
                     loading.value = dataState.loading
 
                     dataState.data?.let { appendRecipes(it) }
-                    dataState.error?.let { error ->
-                        Log.e(TAG, "nextPage: $error")
-                    }
+                    dataState.error?.let { error -> dialogQueue.appendErrorMessage("Error", error) }
                 }.launchIn(viewModelScope)
             }
         }

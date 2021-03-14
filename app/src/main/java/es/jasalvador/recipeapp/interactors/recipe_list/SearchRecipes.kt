@@ -27,6 +27,8 @@ class SearchRecipes(
 
             delay(1000)
 
+            if (query == "error") throw Exception("Search failed")
+
             val recipes = getRecipesFromNetwork(token, page, query)
 
             recipeDao.insertRecipes(entityMapper.fromDomainList(recipes))

@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import es.jasalvador.recipeapp.domain.model.Recipe
 import es.jasalvador.recipeapp.interactors.recipe.GetRecipe
 import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailEvent.GetRecipeDetailEvent
+import es.jasalvador.recipeapp.presentation.ui.util.DialogQueue
 import es.jasalvador.recipeapp.util.TAG
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -29,6 +30,8 @@ class RecipeDetailViewModel @Inject constructor(
     val recipe: MutableState<Recipe?> = mutableStateOf(null)
     val loading = mutableStateOf(false)
     val onLoad: MutableState<Boolean> = mutableStateOf(false)
+
+    val dialogQueue = DialogQueue()
 
     init {
         state.get<Int>(STATE_KEY_RECIPE)?.let { recipeId ->
@@ -60,9 +63,7 @@ class RecipeDetailViewModel @Inject constructor(
                 this.recipe.value = it
                 state.set(STATE_KEY_RECIPE, id)
             }
-            dataState.error?.let {
-                Log.d(TAG, "getRecipe: $it")
-            }
+            dataState.error?.let { error -> dialogQueue.appendErrorMessage("Error", error) }
         }.launchIn(viewModelScope)
     }
 }

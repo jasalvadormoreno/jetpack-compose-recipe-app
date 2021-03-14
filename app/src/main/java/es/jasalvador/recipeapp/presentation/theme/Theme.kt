@@ -8,12 +8,14 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import es.jasalvador.recipeapp.presentation.components.*
+import es.jasalvador.recipeapp.presentation.components.CircularIndeterminateProgressBar
+import es.jasalvador.recipeapp.presentation.components.DefaultSnackbar
+import es.jasalvador.recipeapp.presentation.components.GenericDialog
+import es.jasalvador.recipeapp.presentation.components.GenericDialogInfo
+import java.util.*
 
 private val LightThemeColors = lightColors(
     primary = Blue600,
@@ -48,6 +50,7 @@ fun AppTheme(
     darkTheme: Boolean,
     displayProgressBar: Boolean,
     scaffoldState: ScaffoldState,
+    dialogQueue: Queue<GenericDialogInfo>,
     content: @Composable () -> Unit,
 ) {
     MaterialTheme(
@@ -74,28 +77,20 @@ fun AppTheme(
                 modifier = Modifier.align(Alignment.BottomCenter),
             )
 
-            val isShowing = remember { mutableStateOf(true) }
-            if (isShowing.value) {
-                val dialogInfo = GenericDialogInfo.Builder()
-                    .title("Error")
-                    .onDismiss { isShowing.value = false }
-                    .message("Hey look a dialog description.")
-                    .positiveAction(PositiveAction("Ok") {
-                        isShowing.value = false
-                    })
-                    .dismissAction(DismissAction("Cancel") {
-                        isShowing.value = false
-                    })
-                    .build()
-
-                GenericDialog(
-                    onDismiss = dialogInfo.onDismiss,
-                    title = dialogInfo.title,
-                    message = dialogInfo.message,
-                    positiveAction = dialogInfo.positiveAction,
-                    dismissAction = dialogInfo.dismissAction,
-                )
-            }
+            ProcessDialogQueue(dialogQueue = dialogQueue)
         }
+    }
+}
+
+@Composable
+fun ProcessDialogQueue(dialogQueue: Queue<GenericDialogInfo>) {
+    dialogQueue.peek()?.let { dialogInfo ->
+        GenericDialog(
+            onDismiss = dialogInfo.onDismiss,
+            title = dialogInfo.title,
+            message = dialogInfo.message,
+            positiveAction = dialogInfo.positiveAction,
+            dismissAction = dialogInfo.dismissAction,
+        )
     }
 }

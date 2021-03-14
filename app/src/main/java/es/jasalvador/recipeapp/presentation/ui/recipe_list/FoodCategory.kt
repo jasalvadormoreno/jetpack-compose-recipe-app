@@ -3,6 +3,7 @@ package es.jasalvador.recipeapp.presentation.ui.recipe_list
 import es.jasalvador.recipeapp.presentation.ui.recipe_list.FoodCategory.*
 
 enum class FoodCategory(val value: String) {
+    ERROR("error"),
     CHICKEN("Chicken"),
     BEEF("Beef"),
     SOUP("Soup"),
@@ -16,6 +17,7 @@ enum class FoodCategory(val value: String) {
 
 fun getAllFoodCategories(): List<FoodCategory> {
     return listOf(
+        ERROR,
         CHICKEN,
         BEEF,
         SOUP,
