@@ -15,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -47,6 +48,7 @@ fun SearchAppBar(
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
+                val focusManager = LocalFocusManager.current
                 val keyboardController = LocalSoftwareKeyboardController.current
                 TextField(
                     modifier = Modifier
@@ -63,6 +65,7 @@ fun SearchAppBar(
                     ),
                     keyboardActions = KeyboardActions(onSearch = {
                         onExecuteSearch()
+                        focusManager.clearFocus(forcedClear = true)
                         keyboardController?.hideSoftwareKeyboard()
                     }),
                     leadingIcon = { Icon(Icons.Filled.Search, "") },
