@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.*
 import dagger.hilt.android.AndroidEntryPoint
+import es.jasalvador.recipeapp.datastore.SettingsDataStore
 import es.jasalvador.recipeapp.presentation.navigation.Screen
 import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailScreen
 import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailViewModel
@@ -25,6 +26,9 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var connectivityManager: ConnectivityManager
 
+    @Inject
+    lateinit var settingsDataStore: SettingsDataStore
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -35,9 +39,9 @@ class MainActivity : AppCompatActivity() {
                     val factory = HiltViewModelFactory(LocalContext.current, navBackStackEntry)
                     val viewModel: RecipeListViewModel = viewModel("RecipeList", factory)
                     RecipeListScreen(
-                        isDarkTheme = (application as BaseApp).isDark.value,
+                        isDarkTheme = settingsDataStore.isDark.value,
                         isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
-                        onToggleTheme = { (application as BaseApp).toggleTheme() },
+                        onToggleTheme = { settingsDataStore.toggleTheme() },
                         onNavigateToRecipeDetailScreen = navController::navigate,
                         viewModel = viewModel,
                     )
@@ -52,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                     val factory = HiltViewModelFactory(LocalContext.current, navBackStackEntry)
                     val viewModel: RecipeDetailViewModel = viewModel("RecipeDetail", factory)
                     RecipeDetailScreen(
-                        isDarkTheme = (application as BaseApp).isDark.value,
+                        isDarkTheme = settingsDataStore.isDark.value,
                         isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                         recipeId = navBackStackEntry.arguments?.getInt("recipeId"),
                         viewModel = viewModel
