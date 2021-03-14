@@ -48,7 +48,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
 
-    def compose_version = "1.0.0-beta02"
+    // Con la 1.0.0-beta02 no funciona el cambio de tema
+    def compose_version = "1.0.0-beta01"
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
     implementation "androidx.compose.foundation:foundation:$compose_version"
