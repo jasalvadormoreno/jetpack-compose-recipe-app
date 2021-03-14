@@ -21,6 +21,7 @@ class SearchRecipes(
         token: String,
         page: Int,
         query: String,
+        isNetworkAvailable: Boolean,
     ): Flow<DataState<List<Recipe>>> = flow {
         try {
             emit(DataState.loading<List<Recipe>>())
@@ -29,9 +30,10 @@ class SearchRecipes(
 
             if (query == "error") throw Exception("Search failed")
 
-            val recipes = getRecipesFromNetwork(token, page, query)
-
-            recipeDao.insertRecipes(entityMapper.fromDomainList(recipes))
+            if (isNetworkAvailable) {
+                val recipes = getRecipesFromNetwork(token, page, query)
+                recipeDao.insertRecipes(entityMapper.fromDomainList(recipes))
+            }
 
             val cacheResult = if (query.isBlank()) {
                 recipeDao.getAllRecipes(page = page)

@@ -24,6 +24,7 @@ fun ConnectivityMonitor(
                     .align(Alignment.CenterHorizontally)
                     .padding(8.dp),
                 style = MaterialTheme.typography.h6,
+                color = MaterialTheme.colors.onSurface,
             )
         }
     }
