@@ -8,10 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import es.jasalvador.recipeapp.domain.model.Recipe
-import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailEvent.*
-import es.jasalvador.recipeapp.repository.RecipeRepository
+import es.jasalvador.recipeapp.interactors.recipe.GetRecipe
+import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailEvent.GetRecipeDetailEvent
 import es.jasalvador.recipeapp.util.TAG
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Named
@@ -20,7 +21,7 @@ const val STATE_KEY_RECIPE = "state.key.recipeId"
 
 @HiltViewModel
 class RecipeDetailViewModel @Inject constructor(
-    private val recipeRepository: RecipeRepository,
+    private val getRecipe: GetRecipe,
     @Named("auth_token") private val token: String,
     private val state: SavedStateHandle,
 ) : ViewModel() {
@@ -51,16 +52,17 @@ class RecipeDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getRecipe(id: Int) {
-        loading.value = true
+    private fun getRecipe(id: Int) {
+        getRecipe.execute(token, id).onEach { dataState ->
+            loading.value = dataState.loading
 
-        delay(1000)
-
-        val recipe = recipeRepository.get(token, id)
-        this.recipe.value = recipe
-
-        state.set(STATE_KEY_RECIPE, id)
-
-        loading.value = false
+            dataState.data?.let {
+                this.recipe.value = it
+                state.set(STATE_KEY_RECIPE, id)
+            }
+            dataState.error?.let {
+                Log.d(TAG, "getRecipe: $it")
+            }
+        }.launchIn(viewModelScope)
     }
 }

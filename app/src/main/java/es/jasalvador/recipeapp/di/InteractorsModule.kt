@@ -7,6 +7,7 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.scopes.ViewModelScoped
 import es.jasalvador.recipeapp.cache.RecipeDao
 import es.jasalvador.recipeapp.cache.model.RecipeEntityMapper
+import es.jasalvador.recipeapp.interactors.recipe.GetRecipe
 import es.jasalvador.recipeapp.interactors.recipe_list.RestoreRecipes
 import es.jasalvador.recipeapp.interactors.recipe_list.SearchRecipes
 import es.jasalvador.recipeapp.network.RecipeService
@@ -34,5 +35,16 @@ object InteractorsModule {
         entityMapper: RecipeEntityMapper,
     ): RestoreRecipes {
         return RestoreRecipes(recipeDao, entityMapper)
+    }
+
+    @ViewModelScoped
+    @Provides
+    fun provideGetRecipe(
+        recipeService: RecipeService,
+        recipeDao: RecipeDao,
+        dtoMapper: RecipeDtoMapper,
+        entityMapper: RecipeEntityMapper,
+    ): GetRecipe {
+        return GetRecipe(recipeService, recipeDao, dtoMapper, entityMapper)
     }
 }
