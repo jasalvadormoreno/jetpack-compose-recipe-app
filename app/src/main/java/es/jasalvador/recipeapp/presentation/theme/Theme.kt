@@ -1,17 +1,19 @@
 package es.jasalvador.recipeapp.presentation.theme
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import es.jasalvador.recipeapp.presentation.components.CircularIndeterminateProgressBar
-import es.jasalvador.recipeapp.presentation.components.DefaultSnackbar
+import es.jasalvador.recipeapp.presentation.components.*
 
 private val LightThemeColors = lightColors(
     primary = Blue600,
@@ -74,26 +76,15 @@ fun AppTheme(
 
             val isShowing = remember { mutableStateOf(true) }
             if (isShowing.value) {
-                AlertDialog(
-                    onDismissRequest = { isShowing.value = false },
-                    title = { Text(text = "Dialog Title") },
-                    text = { Text(text = "Dialog Text") },
-                    confirmButton = {
-                        TextButton(
-                            onClick = { isShowing.value = false },
-                        ) {
-                            Text(text = "Ok")
-                        }
+                GenericDialog(
+                    onDismiss = { isShowing.value = false },
+                    title = "Error",
+                    message = "Hey look asfdsf asdf sdf sdf ",
+                    positiveAction = PositiveAction("Ok") {
+                        isShowing.value = false
                     },
-                    dismissButton = {
-                        TextButton(
-                            onClick = { isShowing.value = false },
-                            colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colors.onSurface,
-                            ),
-                        ) {
-                            Text(text = "Cancel")
-                        }
+                    dismissAction = DismissAction("Cancel") {
+                        isShowing.value = false
                     }
                 )
             }
