@@ -16,6 +16,7 @@ import es.jasalvador.recipeapp.presentation.ui.recipe.RecipeDetailEvent.GetRecip
 @Composable
 fun RecipeDetailScreen(
     isDarkTheme: Boolean,
+    isNetworkAvailable: Boolean,
     recipeId: Int?,
     viewModel: RecipeDetailViewModel,
 ) {
@@ -35,6 +36,7 @@ fun RecipeDetailScreen(
 
         AppTheme(
             darkTheme = isDarkTheme,
+            isNetworkAvailable = isNetworkAvailable,
             displayProgressBar = loading,
             scaffoldState = scaffoldState,
             dialogQueue = dialogQueue.queue.value

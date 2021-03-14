@@ -12,6 +12,7 @@ import es.jasalvador.recipeapp.presentation.theme.AppTheme
 @Composable
 fun RecipeListScreen(
     isDarkTheme: Boolean,
+    isNetworkAvailable: Boolean,
     onToggleTheme: () -> Unit,
     onNavigateToRecipeDetailScreen: (String) -> Unit,
     viewModel: RecipeListViewModel,
@@ -26,6 +27,7 @@ fun RecipeListScreen(
 
     AppTheme(
         darkTheme = isDarkTheme,
+        isNetworkAvailable = isNetworkAvailable,
         displayProgressBar = loading,
         scaffoldState = scaffoldState,
         dialogQueue = dialogQueue.queue.value,

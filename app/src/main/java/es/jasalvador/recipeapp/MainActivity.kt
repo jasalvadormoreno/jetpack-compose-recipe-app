@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
                     val viewModel: RecipeListViewModel = viewModel("RecipeList", factory)
                     RecipeListScreen(
                         isDarkTheme = (application as BaseApp).isDark.value,
+                        isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                         onToggleTheme = { (application as BaseApp).toggleTheme() },
                         onNavigateToRecipeDetailScreen = navController::navigate,
                         viewModel = viewModel,
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() {
                     val viewModel: RecipeDetailViewModel = viewModel("RecipeDetail", factory)
                     RecipeDetailScreen(
                         isDarkTheme = (application as BaseApp).isDark.value,
+                        isNetworkAvailable = connectivityManager.isNetworkAvailable.value,
                         recipeId = navBackStackEntry.arguments?.getInt("recipeId"),
                         viewModel = viewModel
                     )
